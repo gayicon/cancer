@@ -8,7 +8,7 @@ st.title("Differentiated Thyroid Cancer Recurrence Analysis")
 # Load dataset from GitHub
 @st.cache_data
 def load_data():
-    url = "https://github.com/gayicon/cancer/Thyroid_Diff.csv"
+    url = "https://github.com/gayicon/cancer/blob/main/Thyroid_Diff.csv"
     return pd.read_csv(url)
 
 # Load the data
