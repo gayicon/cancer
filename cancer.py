@@ -1,38 +1,34 @@
+import streamlit as st
 import pandas as pd
 import plotly.express as px
-import streamlit as st
 
-# Set Streamlit page title
+# Load the dataset from the raw GitHub link
+@st.cache_data
+def load_data():
+    url = "https://raw.githubusercontent.com/gayicon/cancer/main/Thyroid_Diff.csv"
+    return pd.read_csv(url)
+
+# Load data
+df = load_data()
+
+# Streamlit app title
 st.title("Differentiated Thyroid Cancer Recurrence Analysis")
 
-# Upload Dataset
-uploaded_file = st.file_uploader("Upload the Thyroid Cancer Dataset (CSV)", type=["csv"])
+# Select feature for visualization
+st.subheader("Interactive Visualization")
+selected_feature = st.selectbox("Select a feature to analyze:", df.columns)
 
-if uploaded_file is not None:
-    # Load the dataset
-    df = pd.read_csv(uploaded_file)
-    
-    # Show the dataset
-    st.subheader("Dataset Preview")
-    st.write(df.head())
+# Plot interactive histogram
+fig = px.histogram(df, x=selected_feature, title=f"Distribution of {selected_feature}")
+st.plotly_chart(fig)
 
-    # Basic statistics
-    st.subheader("Dataset Summary")
-    st.write(df.describe())
+# Add optional filtering
+st.subheader("Filter by Feature")
+filter_feature = st.selectbox("Select a feature to filter:", df.columns)
+filter_value = st.text_input(f"Enter value to filter {filter_feature}:")
 
-    # Select column for analysis
-    feature = st.selectbox("Select Feature for Analysis", df.columns)
-
-    # Check if the dataset contains a 'Recurrence' column
-    if 'Recurrence' in df.columns:
-        # Interactive Bar Chart
-        fig = px.histogram(df, x=feature, color='Recurrence',
-                           barmode='group',
-                           title=f'Recurrence vs {feature}',
-                           labels={'Recurrence': 'Recurrence Status'},
-                           color_discrete_sequence=['green', 'red'])
-        st.plotly_chart(fig)
-    else:
-        st.warning("The dataset must contain a 'Recurrence' column for analysis.")
-else:
-    st.info("Please upload the dataset to proceed.")
+if filter_value:
+    filtered_df = df[df[filter_feature].astype(str) == filter_value]
+    st.subheader(f"Filtered {selected_feature} Distribution")
+    fig_filtered = px.histogram(filtered_df, x=selected_feature, title=f"Filtered Distribution of {selected_feature}")
+    st.plotly_chart(fig_filtered)
