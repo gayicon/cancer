@@ -14,10 +14,6 @@ df = load_data()
 # Streamlit app title
 st.title("Differentiated Thyroid Cancer Recurrence Analysis")
 
-# Display dataset preview
-st.subheader("Dataset Preview")
-st.dataframe(df.head())
-
 # Select feature for visualization
 st.subheader("Interactive Visualization")
 selected_feature = st.selectbox("Select a feature to analyze:", df.columns)
@@ -33,7 +29,6 @@ filter_value = st.text_input(f"Enter value to filter {filter_feature}:")
 
 if filter_value:
     filtered_df = df[df[filter_feature].astype(str) == filter_value]
-    st.dataframe(filtered_df)
     st.subheader(f"Filtered {selected_feature} Distribution")
     fig_filtered = px.histogram(filtered_df, x=selected_feature, title=f"Filtered Distribution of {selected_feature}")
     st.plotly_chart(fig_filtered)
